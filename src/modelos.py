@@ -4,7 +4,9 @@ from datetime import datetime
 import re
 from uuid import uuid4
 
-TIPOS = {"alerta_operacional": ("falha", "critico")}
+TIPOS = {"alerta_operacional": ("falha", "critico"),
+         "solicitacao_tripulacao": ("urgente", "setor_essencial"),
+         "evento_energetico": ("falha", "consumo_elevado")}
 PRIORIDADES = ("baixa", "media", "alta", "critica")
 STATUS = ("aberta", "em_analise", "resolvida")
 CAMPOS = {"id", "tipo", "modulo_origem", "descricao", "prioridade", "status",

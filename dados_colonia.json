@@ -1,0 +1,36 @@
+{
+  "versao": 1,
+  "ocorrencias": [
+    {
+      "id": "OCR-DEMO-001",
+      "tipo": "alerta_operacional",
+      "modulo_origem": "suporte_de_vida",
+      "descricao": "Oscilação fictícia no circuito secundário de ventilação.",
+      "prioridade": "critica",
+      "status": "aberta",
+      "data_hora": "2026-09-06T10:00:00-03:00",
+      "condicoes_operacionais": {"falha": true, "critico": true}
+    },
+    {
+      "id": "OCR-DEMO-002",
+      "tipo": "solicitacao_tripulacao",
+      "modulo_origem": "abastecimento",
+      "descricao": "Solicitação fictícia de reposição de filtros do setor essencial.",
+      "prioridade": "alta",
+      "status": "aberta",
+      "data_hora": "2026-09-06T10:05:00-03:00",
+      "condicoes_operacionais": {"urgente": true, "setor_essencial": true}
+    },
+    {
+      "id": "OCR-DEMO-003",
+      "tipo": "evento_energetico",
+      "modulo_origem": "energia",
+      "descricao": "Sinal fictício de consumo elevado no módulo energético.",
+      "prioridade": "media",
+      "status": "aberta",
+      "data_hora": "2026-09-06T10:10:00-03:00",
+      "condicoes_operacionais": {"falha": false, "consumo_elevado": true}
+    }
+  ],
+  "analises": []
+}
