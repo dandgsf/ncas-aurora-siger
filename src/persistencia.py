@@ -8,7 +8,9 @@ from pathlib import Path
 import tempfile
 import warnings
 
-from .modelos import validar_ocorrencia
+from .modelos import texto, validar_ocorrencia
+from .analise import ESTRATEGIAS, analisar, construir_prompt, validar_analise
+from uuid import uuid4
 
 
 def vazio():
@@ -37,6 +39,30 @@ def validar_base(base):
         if registro["id"] in ids:
             raise ValueError("Identificador de ocorrência duplicado.")
         ids.add(registro["id"])
+    ocorrencias = {o["id"]: o for o in base["ocorrencias"]}
+    analise_ids = set()
+    for item in base["analises"]:
+        campos = {"id", "data_hora", "estrategia", "prompt", "resposta", "revisao"}
+        if not isinstance(item, dict) or set(item) != campos:
+            raise ValueError("Histórico de análise inválido.")
+        for campo in ("id", "data_hora", "prompt"):
+            if not isinstance(item[campo], str) or not item[campo].strip():
+                raise ValueError("Histórico com campos vazios.")
+        if item["id"] in analise_ids or item["estrategia"] not in ESTRATEGIAS:
+            raise ValueError("Análise repetida ou estratégia desconhecida.")
+        analise_ids.add(item["id"])
+        resposta = item["resposta"]
+        if not isinstance(resposta, dict) or resposta.get("ocorrencia_id") not in ocorrencias:
+            raise ValueError("Análise órfã.")
+        validar_analise(resposta, ocorrencias[resposta["ocorrencia_id"]])
+        if item["revisao"] is not None:
+            revisao = item["revisao"]
+            if not isinstance(revisao, dict) or set(revisao) != {"data_hora", "observacao", "decisao"}:
+                raise ValueError("Revisão inválida.")
+            texto(revisao["observacao"], "observação")
+            texto(revisao["data_hora"], "data")
+            if revisao["decisao"] != "resolvida":
+                raise ValueError("Decisão de revisão inválida.")
     return base
 
 
@@ -120,3 +146,40 @@ class Repositorio:
             if registro["id"] == identificador:
                 return registro
         raise ValueError("Ocorrência não encontrada.")
+
+    def analisar(self, identificador, estrategia="estruturado"):
+        with self.bloqueio():
+            base = self.carregar()
+            ocorrencia = next((o for o in base["ocorrencias"] if o["id"] == identificador), None)
+            if ocorrencia is None:
+                raise ValueError("Ocorrência não encontrada.")
+            if ocorrencia["status"] == "resolvida":
+                raise ValueError("Ocorrência resolvida; cadastre uma nova ocorrência se necessário.")
+            item = {"id": "ANA-" + uuid4().hex[:12],
+                    "data_hora": datetime.now().astimezone().isoformat(timespec="seconds"),
+                    "estrategia": estrategia,
+                    "prompt": construir_prompt(ocorrencia, estrategia),
+                    "resposta": analisar(ocorrencia), "revisao": None}
+            base["analises"].append(item)
+            ocorrencia["status"] = "em_analise"
+            self._salvar(base)
+            self._log("analise:fallback_local", identificador)
+        return item
+
+    def revisar(self, identificador, confirmacao, observacao):
+        if confirmacao != "CONFIRMAR":
+            raise ValueError("Revisão cancelada: é necessário digitar CONFIRMAR.")
+        observacao = texto(observacao, "observação")
+        with self.bloqueio():
+            base = self.carregar()
+            ocorrencia = next((o for o in base["ocorrencias"] if o["id"] == identificador), None)
+            historico = [a for a in base["analises"] if a["resposta"]["ocorrencia_id"] == identificador]
+            if ocorrencia is None or ocorrencia["status"] != "em_analise" or not historico:
+                raise ValueError("A revisão exige uma ocorrência em análise e uma análise registrada.")
+            historico[-1]["revisao"] = {
+                "data_hora": datetime.now().astimezone().isoformat(timespec="seconds"),
+                "observacao": observacao, "decisao": "resolvida"}
+            ocorrencia["status"] = "resolvida"
+            self._salvar(base)
+            self._log("revisao_humana:resolvida", identificador)
+        return ocorrencia
