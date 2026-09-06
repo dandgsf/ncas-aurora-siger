@@ -1,0 +1,2 @@
+# Apenas para regenerar documentos. Aplicação e testes não usam estes pacotes.
+reportlab==4.4.10
