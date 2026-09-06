@@ -44,8 +44,16 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="NCAS - central de ocorrências da Aurora Siger")
     parser.add_argument("--data-dir", type=Path, default=RAIZ / "runtime",
                         help="pasta de dados persistentes (padrão: runtime junto ao programa)")
+    parser.add_argument("--demo", action="store_true", help="carrega três exemplos se a pasta ainda não tem dados")
     args = parser.parse_args(argv)
     repo = Repositorio(args.data_dir)
+    if args.demo:
+        try:
+            criada = repo.inicializar_demo(Repositorio(RAIZ).carregar())
+            print("Três exemplos fictícios carregados." if criada else "Dados existentes preservados.")
+        except (ValueError, OSError) as exc:
+            print(f"Não foi possível iniciar a demonstração: {exc}")
+            return 1
     print("NCAS | Aurora Siger | Protótipo acadêmico")
     print(f"Dados: {repo.pasta}")
     while True:

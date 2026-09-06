@@ -135,6 +135,17 @@ class Repositorio:
             self._log("cadastro", registro["id"])
         return registro
 
+    def inicializar_demo(self, base):
+        validar_base(base)
+        with self.bloqueio():
+            if self.json.exists():
+                self.carregar()  # Confere integridade, sem substituir dados existentes.
+                return False
+            self._salvar(base)
+            for ocorrencia in base["ocorrencias"]:
+                self._log("exemplo_ficticio", ocorrencia["id"])
+        return True
+
     def listar(self, **filtros):
         if set(filtros) - {"tipo", "prioridade", "status"}:
             raise ValueError("Filtro desconhecido.")

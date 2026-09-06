@@ -29,6 +29,10 @@ def tabela_verdade():
 def classificar(ocorrencia):
     validar_ocorrencia(ocorrencia)
     sinais = ocorrencia["condicoes_operacionais"]
+    if ocorrencia["tipo"] == "solicitacao_tripulacao":
+        return "atendimento_prioritario" if sinais["urgente"] and sinais["setor_essencial"] else "atendimento_regular"
+    if ocorrencia["tipo"] == "evento_energetico":
+        return "atencao_energetica" if sinais["falha"] or sinais["consumo_elevado"] else "sem_alerta_energetico"
     ativo = avaliar_alerta(sinais["falha"], sinais["critico"])
     return "alerta_por_falha" if ativo else "sem_alerta_por_falha"
 
