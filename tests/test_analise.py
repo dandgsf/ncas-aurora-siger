@@ -10,6 +10,25 @@ from test_persistencia import exemplo
 
 
 class AnaliseTest(unittest.TestCase):
+    def test_status_fabricado_e_historico_malformado_sao_rejeitados(self):
+        with tempfile.TemporaryDirectory() as pasta:
+            repo = Repositorio(pasta)
+            registro = repo.cadastrar(exemplo())
+            repo.analisar(registro["id"])
+            original = repo.carregar()
+            for campo, valor in (("data_hora", "ontem"), ("resposta", {"ocorrencia_id": []})):
+                base = copy.deepcopy(original)
+                base["analises"][0][campo] = valor
+                repo.json.write_text(json.dumps(base), encoding="utf-8")
+                with self.subTest(campo=campo), self.assertRaises(ValueError):
+                    repo.carregar()
+            for status in ("aberta", "resolvida"):
+                base = copy.deepcopy(original)
+                base["ocorrencias"][0]["status"] = status
+                repo.json.write_text(json.dumps(base), encoding="utf-8")
+                with self.subTest(status=status), self.assertRaises(ValueError):
+                    repo.carregar()
+
     def test_quatro_combinacoes_equivalentes(self):
         linhas = tabela_verdade()
         self.assertEqual(len(linhas), 4)
