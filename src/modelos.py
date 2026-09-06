@@ -28,22 +28,29 @@ def validar_ocorrencia(registro):
         raise ValueError("Ocorrência com campos ausentes ou desconhecidos.")
     for campo in ("id", "tipo", "modulo_origem", "descricao", "prioridade", "status", "data_hora"):
         texto(registro[campo], campo)
+    texto(registro["modulo_origem"], "módulo", 80)
     if registro["tipo"] not in TIPOS:
         raise ValueError("Tipo de ocorrência inválido.")
     if registro["prioridade"] not in PRIORIDADES or registro["status"] not in STATUS:
         raise ValueError("Prioridade ou status inválido.")
-    try:
-        instante = datetime.fromisoformat(registro["data_hora"])
-    except ValueError as exc:
-        raise ValueError("Data deve estar em ISO 8601.") from exc
-    if instante.utcoffset() is None:
-        raise ValueError("Data deve informar o fuso horário.")
+    validar_instante(registro["data_hora"])
     sinais = registro["condicoes_operacionais"]
     if not isinstance(sinais, dict) or set(sinais) != set(TIPOS[registro["tipo"]]):
         raise ValueError("Informe exatamente as condições do tipo selecionado.")
     if any(type(v) is not bool for v in sinais.values()):
         raise ValueError("Condições devem ser booleanas, não números ou textos.")
     return registro
+
+
+def validar_instante(valor):
+    texto(valor, "data")
+    try:
+        instante = datetime.fromisoformat(valor)
+    except ValueError as exc:
+        raise ValueError("Data deve estar em ISO 8601.") from exc
+    if instante.utcoffset() is None:
+        raise ValueError("Data deve informar o fuso horário.")
+    return instante
 
 
 def criar_ocorrencia(tipo, modulo, descricao, prioridade, condicoes):

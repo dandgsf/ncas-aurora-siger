@@ -8,7 +8,7 @@ from pathlib import Path
 import tempfile
 import warnings
 
-from .modelos import texto, validar_ocorrencia
+from .modelos import texto, validar_instante, validar_ocorrencia
 from .analise import ESTRATEGIAS, analisar, construir_prompt, validar_analise
 from uuid import uuid4
 
@@ -51,8 +51,10 @@ def validar_base(base):
         if item["id"] in analise_ids or item["estrategia"] not in ESTRATEGIAS:
             raise ValueError("Análise repetida ou estratégia desconhecida.")
         analise_ids.add(item["id"])
+        validar_instante(item["data_hora"])
         resposta = item["resposta"]
-        if not isinstance(resposta, dict) or resposta.get("ocorrencia_id") not in ocorrencias:
+        if (not isinstance(resposta, dict) or not isinstance(resposta.get("ocorrencia_id"), str)
+                or resposta["ocorrencia_id"] not in ocorrencias):
             raise ValueError("Análise órfã.")
         validar_analise(resposta, ocorrencias[resposta["ocorrencia_id"]])
         if item["revisao"] is not None:
@@ -60,9 +62,19 @@ def validar_base(base):
             if not isinstance(revisao, dict) or set(revisao) != {"data_hora", "observacao", "decisao"}:
                 raise ValueError("Revisão inválida.")
             texto(revisao["observacao"], "observação")
-            texto(revisao["data_hora"], "data")
+            validar_instante(revisao["data_hora"])
             if revisao["decisao"] != "resolvida":
                 raise ValueError("Decisão de revisão inválida.")
+    for registro in base["ocorrencias"]:
+        historico = [a for a in base["analises"] if a["resposta"]["ocorrencia_id"] == registro["id"]]
+        if registro["status"] == "aberta" and historico:
+            raise ValueError("Ocorrência aberta com histórico de análise inconsistente.")
+        if registro["status"] != "aberta" and not historico:
+            raise ValueError("Status exige histórico de análise.")
+        if historico:
+            tem_revisao = historico[-1]["revisao"] is not None
+            if tem_revisao != (registro["status"] == "resolvida"):
+                raise ValueError("Status e revisão humana são inconsistentes.")
     return base
 
 
