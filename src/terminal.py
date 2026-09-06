@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .modelos import PRIORIDADES, TIPOS, criar_ocorrencia
 from .persistencia import Repositorio
+from .analise import ESTRATEGIAS, construir_prompt, tabela_verdade
 
 RAIZ = Path(__file__).resolve().parents[1]
 
@@ -49,7 +50,8 @@ def main(argv=None):
     print(f"Dados: {repo.pasta}")
     while True:
         try:
-            print("\n1 Cadastrar | 2 Listar | 0 Sair")
+            print("\n1 Cadastrar | 2 Listar | 3 Analisar | 4 Ver prompts | 5 Tabela-verdade")
+            print("6 Revisar e resolver | 7 Histórico | 8 Filtrar | 0 Sair")
             opcao = input("> ").strip()
             if opcao == "0":
                 print("Sessão encerrada. Dados preservados.")
@@ -58,6 +60,29 @@ def main(argv=None):
                 cadastrar(repo)
             elif opcao == "2":
                 mostrar(repo.listar())
+            elif opcao == "3":
+                identificador = input("ID da ocorrência: ").strip()
+                estrategia = escolher("Estratégia", ESTRATEGIAS)
+                print("SIMULAÇÃO LOCAL: regras e textos predefinidos, sem chamada a LLM.")
+                mostrar(repo.analisar(identificador, estrategia))
+            elif opcao == "4":
+                ocorrencia = repo.obter(input("ID da ocorrência: ").strip())
+                estrategia = escolher("Estratégia", ESTRATEGIAS)
+                print(construir_prompt(ocorrencia, estrategia))
+            elif opcao == "5":
+                print("(FALHA AND CRITICO) OR (FALHA AND NOT CRITICO) = FALHA")
+                mostrar(tabela_verdade())
+            elif opcao == "6":
+                identificador = input("ID da ocorrência: ").strip()
+                observacao = input("Resultado da verificação humana: ")
+                confirmacao = input("Digite CONFIRMAR para resolver: ").strip()
+                mostrar(repo.revisar(identificador, confirmacao, observacao))
+            elif opcao == "7":
+                mostrar(repo.carregar()["analises"])
+            elif opcao == "8":
+                campo = escolher("Filtrar por", ("tipo", "prioridade", "status"))
+                valor = input("Valor exato: ").strip()
+                mostrar(repo.listar(**{campo: valor}))
             else:
                 print("Opção inválida.")
         except (ValueError, OSError) as exc:
