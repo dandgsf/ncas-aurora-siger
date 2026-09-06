@@ -20,7 +20,7 @@ Os comandos abaixo são modelos; substitua `SUA-CONTA` pelo destino aprovado:
 ```text
 git remote add origin https://github.com/SUA-CONTA/ncas-aurora-siger.git
 git push -u origin main
-git push origin chore/estrutura-independente feat/cadastro-persistencia feat/analise-assistida feat/extensoes-operacionais docs/validacao-entrega
+git push origin chore/estrutura-independente feat/cadastro-persistencia feat/analise-assistida feat/extensoes-operacionais fix/integridade-historico docs/validacao-entrega
 ```
 
 Se `origin` já existir, confira-o antes de qualquer alteração. As branches estão
