@@ -17,11 +17,14 @@ local em `main`. Publicação remota, vídeo e API real não são apresentados c
 | `feat/extensoes-operacionais` | Acrescentar dois tipos sem misturar suas regras com a validação inicial da persistência. | Tripulação, energia e demonstração idempotente; 22 testes acumulados; commit `f470ddd`. |
 | `fix/integridade-historico` | A revisão identificou a necessidade de rejeitar status sem revisão compatível e referências malformadas no histórico. | Validação cruzada e datas; 23 testes acumulados; commit `87e4989`. |
 | `docs/validacao-entrega` | Reunir os materiais e as verificações que permitem a outra pessoa reproduzir o projeto fora do ambiente de desenvolvimento. | README, roteiro, PDFs autorais, ZIP por lista explícita, workflow e testes por subprocesso. |
+| `docs/roteiro-gravacao-5min` | Isolar a reformulação do roteiro, pois ela muda a estratégia de apresentação e a evidência acadêmica, mas não o comportamento do programa. A separação permite revisar tempo, falas e comandos sem misturar alterações funcionais. | Guia operacional cronometrado, inputs literais, enquadramento, privacidade, contingência e checklist de submissão; fluxo validado em dois processos. |
 
 As branches funcionais foram criadas sequencialmente sobre a base integrada.
 Cada marco foi preservado em sua branch e integrado com merge local, sem squash
 ou reescrita. A branch documental incorporou a correção antes da validação final.
-Não foram criadas branches vazias por arquivo ou usadas alterações de exercícios
+A melhoria posterior do roteiro também recebeu branch própria por ser uma revisão
+extensa da apresentação, independente do código já validado. Não foram criadas
+branches vazias por arquivo ou usadas alterações de exercícios
 externos a este projeto. Os hashes finais podem ser consultados com
 `git log --all --graph --oneline --decorate`.
 
