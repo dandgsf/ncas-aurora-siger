@@ -84,10 +84,10 @@ Use uma pasta de dados com nome novo em cada tentativa. Para a tomada final, o
 roteiro usa:
 
 ```text
-runtime/video-final-01
+runtime/video-final-02
 ```
 
-Se repetir a gravação, troque apenas o número para `video-final-02`, `03` e assim
+Se repetir a gravação, troque apenas o número para `video-final-03`, `04` e assim
 por diante. Não reutilize a pasta de uma tentativa anterior: a ocorrência pode já
 estar resolvida e comprometer a sequência. Não é necessário apagar pastas antigas.
 
@@ -128,7 +128,7 @@ aguarde um segundo antes de falar.
 **Digite e pressione Enter:**
 
 ```powershell
-python codigo_fonte.py --demo --data-dir runtime/video-final-01
+python codigo_fonte.py --demo --data-dir runtime/video-final-02
 ```
 
 Quando o menu aparecer, digite:
@@ -248,7 +248,7 @@ Quando o menu reaparecer, digite:
 Depois de voltar ao PowerShell, execute **o mesmo comando e a mesma pasta**:
 
 ```powershell
-python codigo_fonte.py --demo --data-dir runtime/video-final-01
+python codigo_fonte.py --demo --data-dir runtime/video-final-02
 ```
 
 Quando o menu aparecer, digite:
@@ -277,7 +277,7 @@ Saia novamente:
 No PowerShell, digite:
 
 ```powershell
-Get-Content runtime/video-final-01/registros_colonia.txt | Select-Object -Last 5
+Get-Content runtime/video-final-02/registros_colonia.txt | Select-Object -Last 5
 ```
 
 **Tela:** deixe as últimas linhas visíveis, especialmente eventos de análise e
@@ -307,7 +307,7 @@ Pare de falar, aguarde um segundo e encerre a captura. Não continue improvisand
 Use este bloco no segundo monitor. Ele contém tudo o que será digitado na tomada:
 
 ```text
-python codigo_fonte.py --demo --data-dir runtime/video-final-01
+python codigo_fonte.py --demo --data-dir runtime/video-final-02
 2
 5
 
@@ -324,13 +324,13 @@ Verificação fictícia concluída; sensores serão avaliados pelo especialista.
 CONFIRMAR
 
 0
-python codigo_fonte.py --demo --data-dir runtime/video-final-01
+python codigo_fonte.py --demo --data-dir runtime/video-final-02
 8
 status
 resolvida
 0
 
-Get-Content runtime/video-final-01/registros_colonia.txt | Select-Object -Last 5
+Get-Content runtime/video-final-02/registros_colonia.txt | Select-Object -Last 5
 ```
 
 ## O que mostrar

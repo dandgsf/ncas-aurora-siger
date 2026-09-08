@@ -18,6 +18,7 @@ local em `main`. Publicação remota, vídeo e API real não são apresentados c
 | `fix/integridade-historico` | A revisão identificou a necessidade de rejeitar status sem revisão compatível e referências malformadas no histórico. | Validação cruzada e datas; 23 testes acumulados; commit `87e4989`. |
 | `docs/validacao-entrega` | Reunir os materiais e as verificações que permitem a outra pessoa reproduzir o projeto fora do ambiente de desenvolvimento. | README, roteiro, PDFs autorais, ZIP por lista explícita, workflow e testes por subprocesso. |
 | `docs/roteiro-gravacao-5min` | Isolar a reformulação do roteiro, pois ela muda a estratégia de apresentação e a evidência acadêmica, mas não o comportamento do programa. A separação permite revisar tempo, falas e comandos sem misturar alterações funcionais. | Guia operacional cronometrado, inputs literais, enquadramento, privacidade, contingência e checklist de submissão; fluxo validado em dois processos. |
+| `docs/ajusta-video-final-02` | Atualizar a pasta da segunda tomada sem reutilizar o estado persistido da gravação anterior, evitando iniciar a demonstração com uma ocorrência já resolvida. | Todos os comandos do roteiro passam a usar `runtime/video-final-02`; novas tentativas começam em `video-final-03`. |
 
 As branches funcionais foram criadas sequencialmente sobre a base integrada.
 Cada marco foi preservado em sua branch e integrado com merge local, sem squash
